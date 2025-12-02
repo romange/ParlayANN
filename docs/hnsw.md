@@ -45,15 +45,15 @@ The implementation delegates to `beam_search_impl` from `beamSearch.h`, which us
 hashset<indexType> has_been_seen(2 * (10 + beamSize) * max_degree);
 ```
 
-This is a **filtered hashset** (defined in `algorithms/utils/filtered_hashset.h`) with the following characteristics:
+This is a **hashset** (defined in `algorithms/utils/filtered_hashset.h`) with the following characteristics:
 
-- **Lock-free hash table** with linear probing
-- **Approximate membership**: Can give false negatives but not false positives
+- **Lock-free hash table** with linear probing for collision resolution
+- **Exact membership**: Returns true if element is in set, false otherwise
 - **Dynamic resizing**: Grows when load factor exceeds 50%
 - **Thread-local**: Each search operates on its own hashset instance
 
 ```cpp
-// From filtered_hashset.h
+// From filtered_hashset.h - hashset implementation
 template <typename intT>
 struct hashset {
     int bits;
@@ -65,20 +65,26 @@ struct hashset {
         int loc = hash(a) & mask;
         if (filter[loc] == a) return true;
         if (filter[loc] != -1) {
+            // Linear probing on collision
             loc = (loc + 1) & mask;
             while (filter[loc] != -1 && filter[loc] != a)
                 loc = (loc + 1) & mask;
             if (filter[loc] == a) return true;
         }
-        // ... insertion logic ...
+        // Insert if not found
+        filter[loc] = a;
+        num_entries++;
+        return false;
     }
 };
 ```
 
+Note: The file also defines a `filtered_hashset` variant that uses a simpler collision strategy (overwrites on collision) and can give false negatives but not false positives.
+
 **Key Properties**:
 - **O(1) average-case** lookup and insertion
 - **No synchronization required** (thread-local)
-- **Space efficient**: Uses power-of-2 sized array with linear probing
+- **Space efficient**: Uses power-of-2 sized array
 
 #### Alternative Implementation (`search_layer_bak` function)
 
