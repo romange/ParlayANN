@@ -6,7 +6,7 @@ This document analyzes the HNSW (Hierarchical Navigable Small World) algorithm i
 1. Visited set implementation
 2. Locking and synchronization mechanisms
 3. Read/write contention handling
-4. Cross-reference with the ParlayANN paper (https://arxiv.org/abs/2305.04359)
+4. Cross-reference with the ParlayANN paper (arXiv:2305.04359)
 
 ## Algorithm Structure
 
@@ -37,7 +37,7 @@ parlay::sequence<node_id> entrance;          // Entry points for search
 
 The visited set implementation varies between the search and construction phases:
 
-#### During Search (`search_layer` function, lines 1089-1109)
+#### During Search (`search_layer` function)
 
 The implementation delegates to `beam_search_impl` from `beamSearch.h`, which uses:
 
@@ -80,7 +80,7 @@ struct hashset {
 - **No synchronization required** (thread-local)
 - **Space efficient**: Uses power-of-2 sized array with linear probing
 
-#### Alternative Implementation (search_layer_bak, lines 1112-1249)
+#### Alternative Implementation (`search_layer_bak` function)
 
 The backup implementation shows three different visited tracking strategies:
 
@@ -130,7 +130,7 @@ hashset<indexType> has_been_seen;        // Fast membership check
 
 **Critical Insight**: This implementation **avoids traditional locks entirely** through a batch-based construction algorithm.
 
-### Construction Phase (insert function, lines 828-1014)
+### Construction Phase (`insert` function)
 
 The insertion algorithm processes batches of points in **three coordinated phases**:
 
@@ -251,7 +251,7 @@ This ParlayLib function:
 
 ### 2. Entry Point Updates (MINOR CONTENTION POINT)
 
-**Location**: Lines 991-1007
+**Location**: End of `insert` function
 ```cpp
 node_id node_highest = *std::max_element(
     node_new.get(), node_new.get()+size_batch, [&](const node_id u, const node_id v){
@@ -344,7 +344,7 @@ This implementation makes a **different trade-off**:
 
 ### Connection to ParlayANN Paper (arXiv:2305.04359)
 
-The paper "Scaling Graph-Based ANNS Algorithms to Billion-Size Datasets" describes this approach:
+The paper "Scaling Graph-Based ANNS Algorithms to Billion-Size Datasets" (available at https://arxiv.org/abs/2305.04359) describes this approach:
 
 **Key Innovation**: "We design parallel, lock-free versions of these algorithms"
 
