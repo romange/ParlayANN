@@ -344,7 +344,7 @@ This implementation makes a **different trade-off**:
 
 ### Connection to ParlayANN Paper (arXiv:2305.04359)
 
-The paper "Scaling Graph-Based ANNS Algorithms to Billion-Size Datasets" (available at https://arxiv.org/abs/2305.04359) describes this approach:
+The paper "Scaling Graph-Based ANNS Algorithms to Billion-Size Datasets" describes this approach:
 
 **Key Innovation**: "We design parallel, lock-free versions of these algorithms"
 
@@ -354,8 +354,9 @@ The paper "Scaling Graph-Based ANNS Algorithms to Billion-Size Datasets" (availa
 3. **Grouping primitives**: Use `group_by_key` for conflict resolution
 4. **No locks**: Achieve thread-safety through algorithmic design
 
-**Quote from README**:
-> "This repository was built for our paper Scaling Graph-Based ANNS Algorithms to Billion-Size Datasets: A Comparative Analysis"
+**Paper Reference**:
+
+The repository's README states that this implementation was built for the paper "Scaling Graph-Based ANNS Algorithms to Billion-Size Datasets: A Comparative Analysis" (arXiv:2305.04359).
 
 The HNSW implementation exemplifies the paper's approach of using:
 - **Parallel primitives** instead of locks
